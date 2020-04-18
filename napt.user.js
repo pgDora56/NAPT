@@ -22,9 +22,5 @@ function pasteAndSend(){
     },500);
 }
 
-var cb = document.getElementById("correct-button");
-var wb = document.getElementById("wrong-button");
-var tb = document.getElementById("through-button");
+var cb = document.getElementById("openboards-button");
 cb.onclick = pasteAndSend;
-wb.onclick = pasteAndSend;
-tb.onclick = pasteAndSend;
