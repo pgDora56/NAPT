@@ -43,9 +43,8 @@ document.addEventListener('keydown', function (e) {
         else if(pressed == "o") {
             chat("推");
         }
-        else if(num >= 0 && num <= 9) {
+        else if(num > 0 && num <= 9) {
             var msg = "";
-            if(num == 0) num = 10;
             for(var i = 0; i < num; i++) {
                 msg += "推";
             }
