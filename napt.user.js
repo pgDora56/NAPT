@@ -1,40 +1,57 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
-// @namespace    https://github.com/pgDora56
-// @version      0.1
+// @namespace    http://tampermonkey.net/
+// @version      0.2
 // @description  Auto paste for NQA2's chat-area & send, and more
-// @author       Dora F.
-// @match        https://powami.herokuapp.com/nqa2/*
+// @author   Dora F.
+// @match    https://powami.herokuapp.com/nqa2/*
 // @license		 MIT License
 // @grant        none
 // ==/UserScript==
 
+var i;
 var body = document.querySelector("body");
 
 document.querySelector(".ui.dividing.header").style.display = "none";
-document.querySelector(".page-header").style = "background-color: orange;";
+document.querySelector(".page-header").style = "background-color: sienna;";
 document.querySelector("h1").innerHTML = "Nagaya Quiz Arena 2 with NAPT"
 //
 // Provider setting
 var isProvider = window.location.href.slice(-8) == "provider";
 
-if(isProvider){
-    var cb = document.getElementById("correct-button");
-    var wb = document.getElementById("wrong-button");
-    var tb = document.getElementById("through-button");
-    var chatbox = document.querySelector(".chat-box");
+var cb = document.getElementById("correct-button");
+var wb = document.getElementById("wrong-button");
+var tb = document.getElementById("through-button");
+var chatbox = document.querySelector(".chat-box");
 
-    cb.innerHTML = "正解(Q)";
-    wb.innerHTML = "誤答(W)";
-    tb.innerHTML = "スルー(E)";
+cb.innerHTML = "正解(Q)";
+wb.innerHTML = "誤答(W)";
+tb.innerHTML = "スルー(E)";
 
-    var INPUTS = ['INPUT', 'TEXTAREA'];
-    document.addEventListener('keydown', function (e) {
-        // Key Down
-        if (INPUTS.indexOf(e.target.tagName) == -1) { // Do not process when input texts
-            var pressed = String.fromCharCode(e.which).toLowerCase();
-            pressed = (e.shiftKey ? 'S' : '') + pressed;
-            console.log(pressed);
+var INPUTS = ['INPUT', 'TEXTAREA'];
+document.addEventListener('keydown', function (e) {
+    // Key Down
+    if (INPUTS.indexOf(e.target.tagName) == -1) { // Do not process when input texts
+        var pressed = String.fromCharCode(e.which).toLowerCase();
+        pressed = (e.shiftKey ? 'S' : '') + pressed;
+        var num = pressed - "0";
+        console.log(pressed + " Push:" + num);
+
+        if(pressed == "m"){
+            chat("(o・∇・o)");
+        }
+        else if(pressed == "o") {
+            chat("推");
+        }
+        else if(num >= 0 && num <= 9) {
+            var msg = "";
+            if(num == 0) num = 10;
+            for(var i = 0; i < num; i++) {
+                msg += "推";
+            }
+            chat(msg);
+        }
+        else if(isProvider){
             if(pressed == "q"){
                 cb.click();
             }
@@ -53,10 +70,12 @@ if(isProvider){
             }
             else if(pressed == "f") {
                 var freezeplus = document.querySelector(".player.selected").querySelector(".freeze-plus.ui.compact.icon.button");
-                for(var i = 0; i < 9; i++) {
+                for(i = 0; i < 9; i++) {
                     freezeplus.click();
                 }
             }
+        }
+        /*
             else if(pressed == "c") {
                 var corplus = document.querySelector(".player.selected").querySelector(".correct-plus.ui.icon.green.button");
                 for(i = 0; i < 100; i++){
@@ -69,9 +88,10 @@ if(isProvider){
                     corminus.click();
                 }
             }
-        }
-    }, false);
-}
+            */
+    }
+}, false);
+
 
 function pasteAndSend(){
     var songdata = "No data";
@@ -92,8 +112,12 @@ function send(data) {
         remain = data.slice(100);
         data = data.slice(0, 99);
     }
-    chatbox.value = data;
-    document.querySelector('.ui.blue.icon.submit.button').click();
+    chat(data);
     if(remain != "") send(remain);
+}
+
+function chat(comment) {
+    chatbox.value = comment;
+    document.querySelector('.ui.blue.icon.submit.button').click();
 }
 
