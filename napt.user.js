@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.2.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
