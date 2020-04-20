@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -115,7 +115,7 @@ function send(data) {
     var remain = "";
     if(data.length > 100){
         remain = data.slice(100);
-        data = data.slice(0, 99);
+        data = data.slice(0, 100);
     }
     chat(data);
     if(remain != "") send(remain);
