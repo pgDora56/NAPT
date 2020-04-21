@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      1.0.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -35,10 +35,13 @@ document.addEventListener('keydown', function (e) {
         var pressed = String.fromCharCode(e.which).toLowerCase();
         pressed = (e.shiftKey ? 'S' : '') + pressed;
         var num = pressed - "0";
-        console.log(pressed + " Push:" + num);
+        // console.log(pressed + " Push:" + num);
 
         if(pressed == "m"){
             chat("(o・∇・o)");
+        }
+        else if(pressed == "n"){
+            chat("(*>△<)");
         }
         else if(pressed == "o") {
             chat("推");
@@ -73,6 +76,10 @@ document.addEventListener('keydown', function (e) {
                 document.getElementById("show-rule-window").click();
                 document.getElementById("rule-window").querySelector(".ui.positive.right.submit.button").click();
             }
+            else if(pressed == "r") {
+                console.log("PUSH r");
+                nyRule();
+            }
             else if(pressed == "f") {
                 var freezeplus = document.querySelector(".player.selected").querySelector(".freeze-plus.ui.compact.icon.button");
                 for(i = 0; i < 9; i++) {
@@ -80,20 +87,6 @@ document.addEventListener('keydown', function (e) {
                 }
             }
         }
-        /*
-            else if(pressed == "c") {
-                var corplus = document.querySelector(".player.selected").querySelector(".correct-plus.ui.icon.green.button");
-                for(i = 0; i < 100; i++){
-                    corplus.click();
-                }
-            }
-            else if(pressed == "Sc") {
-                var corminus = document.querySelector(".player.selected").querySelector(".correct-minus.ui.icon.green.button");
-                for(i = 0; i < 100; i++){
-                    corminus.click();
-                }
-            }
-            */
     }
 }, false);
 
@@ -126,3 +119,20 @@ function chat(comment) {
     document.querySelector('.ui.blue.icon.submit.button').click();
 }
 
+function nyRule() {
+    var pls = document.querySelectorAll(".player");
+    pls.forEach(pl => {
+        var cele = pl.querySelector(".correct.score.ui.green.small.middle.aligned.statistic");
+        var wele = pl.querySelector(".wrong.score.ui.red.small.middle.aligned.statistic");
+        var cVal = cele.querySelector(".score-value").innerHTML;
+        var wVal = wele.querySelector(".score-value").innerHTML;
+        var cbut = pl.querySelector(".correct-minus.ui.icon.green.button");
+        var wbut = pl.querySelector(".wrong-minus.ui.icon.red.button");
+        while(cVal != 0 && wVal != 0) {
+            cbut.click();
+            wbut.click();
+            cVal--;
+            wVal--;
+        }
+    });
+}
