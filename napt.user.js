@@ -79,7 +79,6 @@ document.addEventListener('keydown', function (e) {
                 document.getElementById("rule-window").querySelector(".ui.positive.right.submit.button").click();
             }
             else if(pressed == "r") {
-                console.log("PUSH r");
                 nyRule();
             }
             else if(pressed == "f") {
