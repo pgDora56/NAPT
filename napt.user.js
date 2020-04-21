@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
-// @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @namespace    https://github.com/pgDora56
+// @version      0.9
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
 // @license		 MIT License
 // @grant        none
+// @supportURL	https://github.com/pgDora56/NAPT/issues
+// @updateURL	https://raw.githubusercontent.com/pgDora56/NAPT/master/napt.user.js
 // ==/UserScript==
 
 var i;
