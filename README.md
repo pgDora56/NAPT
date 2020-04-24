@@ -6,7 +6,11 @@ Automatically paste and send the copied song information etc. at the time of que
 
 ## Usage 
 
-All operation is moved from keydown.
+The title bar color changes to darkblue(player)/sienna(provider) when this script is running.
+
+Clicking title(`Nagaya Quiz Arena 2 with NAPT`), You can go back and forth between `player` and `provider`.
+
+All operation is moved from keydown when you are provider.
 
 |Key|Operation|
 |-|-|
@@ -16,6 +20,7 @@ All operation is moved from keydown.
 |E|Through|
 |Shift+R|Go to next game in same rule|
 |F|Increase player's freeze count to max(9) after select player|
+|Alt+R|Score fix - Pseudo NY rule|
 
 
 ## Operation confirmed environment

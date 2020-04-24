@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      0.9
+// @version      1.0.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -11,15 +11,22 @@
 // @updateURL	https://raw.githubusercontent.com/pgDora56/NAPT/master/napt.user.js
 // ==/UserScript==
 
-var i;
+var i, movelink;
 var body = document.querySelector("body");
-
-document.querySelector(".ui.dividing.header").style.display = "none";
-document.querySelector(".page-header").style = "background-color: sienna;";
-document.querySelector("h1").innerHTML = "Nagaya Quiz Arena 2 with NAPT"
 //
 // Provider setting
 var isProvider = window.location.href.slice(-8) == "provider";
+var barcolor = isProvider ? "sienna" : "darkblue";
+document.querySelector(".ui.dividing.header").style.display = "none";
+document.querySelector(".page-header").style = "background-color: " + barcolor + ";";
+
+if(isProvider){
+    movelink = window.location.href.slice(0, -8) + "player";
+}
+else{
+    movelink = window.location.href.slice(0, -6) + "provider";
+}
+document.querySelector("h1").innerHTML = "<a href='" + movelink + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
 
 var cb = document.getElementById("correct-button");
 var wb = document.getElementById("wrong-button");
@@ -35,7 +42,7 @@ document.addEventListener('keydown', function (e) {
     // Key Down
     if (INPUTS.indexOf(e.target.tagName) == -1) { // Do not process when input texts
         var pressed = String.fromCharCode(e.which).toLowerCase();
-        pressed = (e.shiftKey ? 'S' : '') + pressed;
+        pressed = (e.altKey ? 'A' : '') + (e.shiftKey ? 'S' : '') + pressed;
         var num = pressed - "0";
         // console.log(pressed + " Push:" + num);
 
@@ -45,17 +52,14 @@ document.addEventListener('keydown', function (e) {
         else if(pressed == "n"){
             chat("(*>△<)");
         }
-        else if(pressed == "o") {
-            chat("推");
-        }
-        else if(num > 0 && num <= 3) {
+        else if(num > 0 && num <= 2) {
             var msg = "";
             for(var i = 0; i < num; i++) {
                 msg += "推";
             }
             chat(msg);
         }
-        else if(num >= 4 && num <= 9) {
+        else if(num >= 3 && num <= 9) {
             chat("推×" + num);
         }
         else if(pressed == "k") {
@@ -78,7 +82,7 @@ document.addEventListener('keydown', function (e) {
                 document.getElementById("show-rule-window").click();
                 document.getElementById("rule-window").querySelector(".ui.positive.right.submit.button").click();
             }
-            else if(pressed == "r") {
+            else if(pressed == "Ar") {
                 nyRule();
             }
             else if(pressed == "f") {
@@ -87,6 +91,12 @@ document.addEventListener('keydown', function (e) {
                     freezeplus.click();
                 }
             }
+            // else if(pressed == "z") {
+            //     var wroplus = document.querySelector(".player.selected").querySelector(".wrong-plus.ui.icon.red.button");
+            //     for(i = 0; i < 41700; i++) {
+            //         wroplus.click();
+            //     }
+            // }
         }
     }
 }, false);
