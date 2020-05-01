@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.0.0
+// @version      1.1.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -12,7 +12,14 @@
 // ==/UserScript==
 
 var i, movelink;
+var hotkeyBox = null;
+var hotkeylines = [];
 var body = document.querySelector("body");
+var config = document.getElementById("config-window");
+config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div><div class="field"><textarea id="napt-hotkey">m:(o・∇・o)\nn:(*&gt;△&lt;)\nk:草</textarea></div>');
+hotkeyBox = document.getElementById("napt-hotkey");
+refreshHotkey();
+
 //
 // Provider setting
 var isProvider = window.location.href.slice(-8) == "provider";
@@ -31,11 +38,13 @@ document.querySelector("h1").innerHTML = "<a href='" + movelink + "'>" + "Nagaya
 var cb = document.getElementById("correct-button");
 var wb = document.getElementById("wrong-button");
 var tb = document.getElementById("through-button");
+var consoleApply = config.querySelector(".ui.positive.right.submit.button");
 var chatbox = document.querySelector(".chat-box");
 
 cb.innerHTML = "正解(Q)";
 wb.innerHTML = "誤答(W)";
 tb.innerHTML = "スルー(E)";
+consoleApply.addEventListener("click", refreshHotkey);
 
 var INPUTS = ['INPUT', 'TEXTAREA'];
 document.addEventListener('keydown', function (e) {
@@ -44,15 +53,8 @@ document.addEventListener('keydown', function (e) {
         var pressed = String.fromCharCode(e.which).toLowerCase();
         pressed = (e.altKey ? 'A' : '') + (e.shiftKey ? 'S' : '') + pressed;
         var num = pressed - "0";
-        // console.log(pressed + " Push:" + num);
 
-        if(pressed == "m"){
-            chat("(o・∇・o)");
-        }
-        else if(pressed == "n"){
-            chat("(*>△<)");
-        }
-        else if(num > 0 && num <= 2) {
+        if(num > 0 && num <= 2) {
             var msg = "";
             for(var i = 0; i < num; i++) {
                 msg += "推";
@@ -62,10 +64,14 @@ document.addEventListener('keydown', function (e) {
         else if(num >= 3 && num <= 9) {
             chat("推×" + num);
         }
-        else if(pressed == "k") {
-            chat("草");
+        else{
+            var match = hotkeylines.filter(line => line.key == pressed);
+            if(match.length > 0){
+                chat(match[0].content);
+            }
         }
-        else if(isProvider){
+
+        if(isProvider){
             if(pressed == "q"){
                 cb.click();
             }
@@ -130,6 +136,16 @@ function chat(comment) {
     document.querySelector('.ui.blue.icon.submit.button').click();
 }
 
+function refreshHotkey() {
+    hotkeylines = hotkeyBox.value.split('\n')
+      .filter(line => line.length > 2)
+      .filter(line => line.slice(1,2) == ":")
+      .map(line => ({
+          key: line.slice(0,1),
+          content: new DOMParser().parseFromString(line.slice(2), 'text/html').documentElement.textContent,
+      }));
+}
+
 function nyRule() {
     var pls = document.querySelectorAll(".player");
     pls.forEach(pl => {
@@ -139,7 +155,7 @@ function nyRule() {
         var wVal = wele.querySelector(".score-value").innerHTML;
         var cbut = pl.querySelector(".correct-minus.ui.icon.green.button");
         var wbut = pl.querySelector(".wrong-minus.ui.icon.red.button");
-        while(cVal != 0 && wVal != 0) {
+        while(cVal > 0 && wVal > 0) {
             cbut.click();
             wbut.click();
             cVal--;
@@ -147,3 +163,4 @@ function nyRule() {
         }
     });
 }
+

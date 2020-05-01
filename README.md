@@ -22,6 +22,8 @@ All operation is moved from keydown when you are provider.
 |F|Increase player's freeze count to max(9) after select player|
 |Alt+R|Score fix - Pseudo NY rule|
 
+And you can set original hot keys.
+
 
 ## Operation confirmed environment
 
@@ -34,6 +36,8 @@ Firefox is not ready.....
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
 2. Click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js)
+
+If you want to update this script, you only click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js).
 
 ## LICENSE 
 
