@@ -1,12 +1,12 @@
-// ==UserScript==
+/// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.1.0
+// @version      1.1.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
 // @license		 MIT License
-// @grant        none
+// @grant        GM_setValue, GM_getValue
 // @supportURL	https://github.com/pgDora56/NAPT/issues
 // @updateURL	https://raw.githubusercontent.com/pgDora56/NAPT/master/napt.user.js
 // ==/UserScript==
@@ -15,9 +15,15 @@ var i, movelink;
 var hotkeyBox = null;
 var hotkeylines = [];
 var body = document.querySelector("body");
+const defhotkey = "m:(o・∇・o)\nn:(*>△<)\nk:草";
 var config = document.getElementById("config-window");
-config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div><div class="field"><textarea id="napt-hotkey">m:(o・∇・o)\nn:(*&gt;△&lt;)\nk:草</textarea></div>');
+config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div>'+
+                                                    '<p>現状、アルファベットのみ対応しています(小文字で指定してください)。複数指定した場合は最初に指定されたものが適用されます。</p>'+
+                                                    '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。</p>'+
+                                                    '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
+                                                    '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>');
 hotkeyBox = document.getElementById("napt-hotkey");
+importHotkey();
 refreshHotkey();
 
 //
@@ -137,13 +143,15 @@ function chat(comment) {
 }
 
 function refreshHotkey() {
-    hotkeylines = hotkeyBox.value.split('\n')
+    var puretext = new DOMParser().parseFromString(hotkeyBox.value, 'text/html').documentElement.textContent;
+    hotkeylines = puretext.split('\n')
       .filter(line => line.length > 2)
       .filter(line => line.slice(1,2) == ":")
       .map(line => ({
           key: line.slice(0,1),
-          content: new DOMParser().parseFromString(line.slice(2), 'text/html').documentElement.textContent,
+          content: line.slice(2),
       }));
+    exportHotkey();
 }
 
 function nyRule() {
@@ -162,5 +170,17 @@ function nyRule() {
             wVal--;
         }
     });
+}
+
+
+// Data Translate to local(for hotkey settings) ========================================================
+function importHotkey() {
+    var value = window.localStorage.getItem("hotkey");
+    if(value != null){ hotkeyBox.value = value; }
+    else{ hotkeyBox.value = defhotkey; }
+}
+
+function exportHotkey() {
+    window.localStorage.setItem("hotkey", hotkeyBox.value);
 }
 

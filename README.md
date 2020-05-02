@@ -4,6 +4,13 @@ NQA2 Automatically Paste Tool
 
 Automatically paste and send the copied song information etc. at the time of questioning in NQA2
 
+## Setup
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
+2. Click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js)
+
+If you want to update this script, you only click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js).
+
 ## Usage 
 
 The title bar color changes to darkblue(player)/sienna(provider) when this script is running.
@@ -24,20 +31,12 @@ All operation is moved from keydown when you are provider.
 
 And you can set original hot keys.
 
-
 ## Operation confirmed environment
 
 * Chrome 
 * Chromium browser 
 
 Firefox is not ready.....
-
-## Setup
-
-1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
-2. Click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js)
-
-If you want to update this script, you only click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js).
 
 ## LICENSE 
 
