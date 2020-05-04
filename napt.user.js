@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.1.1
+// @version      1.1.2
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -13,13 +13,14 @@
 
 var i, movelink;
 var hotkeyBox = null;
-var hotkeylines = [];
+var hotkeylines = []; var playerHotkeylines = [];
 var body = document.querySelector("body");
 const defhotkey = "m:(o・∇・o)\nn:(*>△<)\nk:草";
 var config = document.getElementById("config-window");
 config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div>'+
-                                                    '<p>現状、アルファベットのみ対応しています(小文字で指定してください)。複数指定した場合は最初に指定されたものが適用されます。</p>'+
-                                                    '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。</p>'+
+                                                    '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
+                                                    '<p>AltとShiftの修飾キーが使用可能です。Altを使いたい場合はAを、Shiftを使いたい場合はSをアルファベットの前に付けてください。</p>' +
+                                                    '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
                                                     '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
                                                     '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>');
 hotkeyBox = document.getElementById("napt-hotkey");
@@ -71,7 +72,12 @@ document.addEventListener('keydown', function (e) {
             chat("推×" + num);
         }
         else{
-            var match = hotkeylines.filter(line => line.key == pressed);
+            if(!isProvider) {
+                var match = playerHotkeylines.filter(line => line.key == pressed);
+            }
+            if(match.length == 0) {
+                match = hotkeylines.filter(line => line.key == pressed);
+            }
             if(match.length > 0){
                 chat(match[0].content);
             }
@@ -144,13 +150,37 @@ function chat(comment) {
 
 function refreshHotkey() {
     var puretext = new DOMParser().parseFromString(hotkeyBox.value, 'text/html').documentElement.textContent;
-    hotkeylines = puretext.split('\n')
-      .filter(line => line.length > 2)
-      .filter(line => line.slice(1,2) == ":")
-      .map(line => ({
-          key: line.slice(0,1),
-          content: line.slice(2),
-      }));
+
+    var lines = puretext.split('\n').filter(line => line.indexOf(":") != -1);
+
+    playerHotkeylines = [];
+    hotkeylines = [];
+
+    lines.forEach(line => {
+        var len = line.length;
+        var keyt = ""; var cont = "";
+        var slicestart = (line.charAt(0)=="!") ? 1 : 0;
+
+        for(i=slicestart;i<len;i++){
+            if(line.charAt(i)==":"){
+                keyt = line.slice(slicestart,i);
+                cont = line.slice(i+1);
+            }
+        }
+
+        if(slicestart == 1){
+            playerHotkeylines.push({
+                key: keyt,
+                content: cont,
+            });
+        }
+        else{
+            hotkeylines.push({
+                key: keyt,
+                content: cont,
+            });
+        }
+    });
     exportHotkey();
 }
 
@@ -183,4 +213,3 @@ function importHotkey() {
 function exportHotkey() {
     window.localStorage.setItem("hotkey", hotkeyBox.value);
 }
-
