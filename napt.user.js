@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.1.3
+// @version      1.2.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -17,59 +17,51 @@ var hotkeylines = []; var playerHotkeylines = [];
 var body = document.querySelector("body");
 const defhotkey = "m:(o・∇・o)\nn:(*>△<)\nk:草";
 var config = document.getElementById("config-window");
-config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div>'+
-                                                    '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
-                                                    '<p>AltとShiftの修飾キーが使用可能です。Altを使いたい場合はAを、Shiftを使いたい場合はSをアルファベットの前に付けてください。</p>' +
-                                                    '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
-                                                    '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
-                                                    '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>');
-hotkeyBox = document.getElementById("napt-hotkey");
-importHotkey();
-refreshHotkey();
+var goConfigButton = document.getElementById("show-config-window");
+var flavors;
 
 //
 // Provider setting
 var isProvider = window.location.href.slice(-8) == "provider";
 var barcolor = isProvider ? "sienna" : "darkblue";
-document.querySelector(".ui.dividing.header").style.display = "none";
-document.querySelector(".page-header").style = "background-color: " + barcolor + ";";
 
-if(isProvider){
-    movelink = window.location.href.slice(0, -8) + "player";
-}
-else{
-    movelink = window.location.href.slice(0, -6) + "provider";
-}
-document.querySelector("h1").innerHTML = "<a href='" + movelink + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
-
+//
+// Element Definition
 var cb = document.getElementById("correct-button");
 var wb = document.getElementById("wrong-button");
 var tb = document.getElementById("through-button");
 var consoleApply = config.querySelector(".ui.positive.right.submit.button");
 var chatbox = document.querySelector(".chat-box");
 
-cb.innerHTML = "正解(Q)";
-wb.innerHTML = "誤答(W)";
-tb.innerHTML = "スルー(E)";
-consoleApply.addEventListener("click", refreshHotkey);
+initialization();
 
 var INPUTS = ['INPUT', 'TEXTAREA'];
 document.addEventListener('keydown', function (e) {
     // Key Down
     if (INPUTS.indexOf(e.target.tagName) == -1) { // Do not process when input texts
         var pressed = String.fromCharCode(e.which).toLowerCase();
+        var keycode = e.which;
         pressed = (e.altKey ? 'A' : '') + (e.shiftKey ? 'S' : '') + pressed;
-        var num = pressed - "0";
+        var num = keycode - 48;
 
-        if(num > 0 && num <= 2) {
+        if(num >= 0 && num <= 2) {
             var msg = "";
             for(var i = 0; i < num; i++) {
                 msg += "推";
             }
+            if(num==0) msg = "推×10";
             chat(msg);
         }
         else if(num >= 3 && num <= 9) {
             chat("推×" + num);
+        }
+        else if(keycode == 219){
+            // Push [
+            flavorSwap(1);
+        }
+        else if(keycode == 221){
+            // Push ]
+            flavorSwap(2);
         }
         else{
             var match = [];
@@ -86,7 +78,6 @@ document.addEventListener('keydown', function (e) {
 
         if(isProvider){
             if(pressed == "q"){
-
                 cb.click();
             }
             else if(pressed == "w") {
@@ -121,6 +112,45 @@ document.addEventListener('keydown', function (e) {
     }
 }, false);
 
+function initialization() {
+    config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div>'+
+                                                        '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
+                                                        '<p>AltとShiftの修飾キーが使用可能です。Altを使いたい場合はAを、Shiftを使いたい場合はSをアルファベットの前に付けてください。</p>' +
+                                                        '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
+                                                        '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
+                                                        '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>\n');
+    config.querySelector(".fields").insertAdjacentHTML('beforeend', '<div class="field"><label>flavor-sub1</label><input type="text" id="flavor1" maxlength="10"></div>'
+                                                      +'<div class="field"><label>flavor-sub2</label><input type="text" id="flavor2" maxlength="10"></div>')
+    hotkeyBox = document.getElementById("napt-hotkey");
+    importHotkey();
+    refreshHotkey();
+
+    document.querySelector(".ui.dividing.header").style.display = "none";
+    document.querySelector(".page-header").style = "background-color: " + barcolor + ";";
+
+    if(isProvider){
+        movelink = window.location.href.slice(0, -8) + "player";
+    }
+    else{
+        movelink = window.location.href.slice(0, -6) + "provider";
+    }
+    document.querySelector("h1").innerHTML = "<a href='" + movelink + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
+    cb.innerHTML = "正解(Q)";
+    wb.innerHTML = "誤答(W)";
+    tb.innerHTML = "スルー(E)";
+    consoleApply.addEventListener("click", function () {
+        refreshHotkey();
+        if(flavors == null) flavors = [config.querySelector(".name").value, config.querySelector(".flavor").value, document.getElementById("flavor1").value, document.getElementById("flavor2").value];
+        console.log(flavors);
+    });
+    goConfigButton.addEventListener("click", function() {
+        if(flavors != null){
+            config.querySelector(".flavor").value = flavors[1];
+            document.getElementById("flavor1").value = flavors[2];
+            document.getElementById("flavor2").value = flavors[3];
+        }
+    });
+}
 
 function pasteAndSend(){
     var songdata = "No data";
@@ -204,6 +234,15 @@ function nyRule() {
     });
 }
 
+function flavorSwap(id){
+    var prevflavor = flavors[1];
+    flavors[1] = flavors[id+1];
+    flavors[id+1] = prevflavor;
+
+    config.querySelector(".name").value = flavors[0];
+    config.querySelector(".flavor").value = flavors[1];
+    consoleApply.click();
+}
 
 // Data Translate to local(for hotkey settings) ========================================================
 function importHotkey() {

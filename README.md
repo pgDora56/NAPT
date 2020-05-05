@@ -17,7 +17,7 @@ The title bar color changes to darkblue(player)/sienna(provider) when this scrip
 
 Clicking title(`Nagaya Quiz Arena 2 with NAPT`), You can go back and forth between `player` and `provider`.
 
-All operation is moved from keydown when you are provider.
+All operation is moved from keydown. When you are player, you can only use swap(`[` and `]`).
 
 |Key|Operation|
 |-|-|
@@ -28,6 +28,8 @@ All operation is moved from keydown when you are provider.
 |Shift+R|Go to next game in same rule|
 |F|Increase player's freeze count to max(9) after select player|
 |Alt+R|Score fix - Pseudo NY rule|
+|[|Swap flavor and flavor-sub1|
+|]|Swap flavor and flavor-sub1|
 
 And you can set original hot keys.
 
