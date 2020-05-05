@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.1.2
+// @version      1.1.3
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -72,8 +72,9 @@ document.addEventListener('keydown', function (e) {
             chat("推×" + num);
         }
         else{
+            var match = [];
             if(!isProvider) {
-                var match = playerHotkeylines.filter(line => line.key == pressed);
+                match = playerHotkeylines.filter(line => line.key == pressed);
             }
             if(match.length == 0) {
                 match = hotkeylines.filter(line => line.key == pressed);
@@ -85,6 +86,7 @@ document.addEventListener('keydown', function (e) {
 
         if(isProvider){
             if(pressed == "q"){
+
                 cb.click();
             }
             else if(pressed == "w") {
