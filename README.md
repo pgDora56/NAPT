@@ -29,7 +29,7 @@ All operation is moved from keydown. When you are player, you can only use swap(
 |F|Increase player's freeze count to max(9) after select player|
 |Alt+R|Score fix - Pseudo NY rule|
 |[|Swap flavor and flavor-sub1|
-|]|Swap flavor and flavor-sub1|
+|]|Swap flavor and flavor-sub2|
 
 And you can set original hot keys.
 
