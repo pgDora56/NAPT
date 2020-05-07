@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.2.0
+// @version      1.2.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -141,7 +141,6 @@ function initialization() {
     consoleApply.addEventListener("click", function () {
         refreshHotkey();
         if(flavors == null) flavors = [config.querySelector(".name").value, config.querySelector(".flavor").value, document.getElementById("flavor1").value, document.getElementById("flavor2").value];
-        console.log(flavors);
     });
     goConfigButton.addEventListener("click", function() {
         if(flavors != null){
@@ -149,6 +148,7 @@ function initialization() {
             document.getElementById("flavor1").value = flavors[2];
             document.getElementById("flavor2").value = flavors[3];
         }
+        flavors = null;
     });
 }
 
