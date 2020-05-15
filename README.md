@@ -26,6 +26,7 @@ All operation is moved from keydown. When you are player, you can only use swap(
 |W|Wrong|
 |E|Through|
 |Shift+R|Go to next game in same rule|
+|A|Select all player|
 |F|Increase player's freeze count to max(9) after select player|
 |Alt+R|Score fix - Pseudo NY rule|
 |[|Swap flavor and flavor-sub1|

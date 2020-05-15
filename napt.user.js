@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.2.1
+// @version      1.3.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -29,7 +29,7 @@ var barcolor = isProvider ? "sienna" : "darkblue";
 // Element Definition
 var cb = document.getElementById("correct-button");
 var wb = document.getElementById("wrong-button");
-var tb = document.getElementById("through-button");
+var tb = document.getElementById("through-button")
 var consoleApply = config.querySelector(".ui.positive.right.submit.button");
 var chatbox = document.querySelector(".chat-box");
 
@@ -72,7 +72,12 @@ document.addEventListener('keydown', function (e) {
                 match = hotkeylines.filter(line => line.key == pressed);
             }
             if(match.length > 0){
-                chat(match[0].content);
+                if(match[0].content == "%board-correct%"){
+                    var selected = document.getElementById("players").querySelectorAll('.player.selected');
+                    chat("正誤判定＞正解者：" + selected.length + "人");
+                    cb.click();
+                }
+                else chat(match[0].content);
             }
         }
 
@@ -88,6 +93,10 @@ document.addEventListener('keydown', function (e) {
             }
             else if(pressed == " ") {
                 pasteAndSend();
+            }
+            else if(pressed == "a") {
+                var players = document.getElementById("players").querySelectorAll('.player');
+                players.forEach(pl => pl.click());
             }
             else if(pressed == "Sr") {
                 document.getElementById("show-rule-window").click();
@@ -119,6 +128,7 @@ function initialization() {
                                                         '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
                                                         '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
                                                         '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>\n');
+
     config.querySelector(".fields").insertAdjacentHTML('beforeend', '<div class="field"><label>flavor-sub1</label><input type="text" id="flavor1" maxlength="10"></div>'
                                                       +'<div class="field"><label>flavor-sub2</label><input type="text" id="flavor2" maxlength="10"></div>')
     hotkeyBox = document.getElementById("napt-hotkey");
