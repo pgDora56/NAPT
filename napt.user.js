@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.4.0
+// @version      1.4.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -11,7 +11,7 @@
 // @updateURL	https://raw.githubusercontent.com/pgDora56/NAPT/master/napt.user.js
 // ==/UserScript==
 
-var debug_mode = true;
+var debug_mode = false;
 
 var i, movelink;
 var hotkeyBox = null;
@@ -276,7 +276,6 @@ function flavorSwap(id){
 function updateScoreData(){
     if(!displayRank) return;
     var players = document.getElementById("players").getElementsByClassName('player');
-    console.log(players.length);
     score = [];
 
     // playerをすべて取得
