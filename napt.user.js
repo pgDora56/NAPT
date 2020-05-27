@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.4.1
+// @version      1.5.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -38,7 +38,6 @@ var chatbox = document.querySelector(".chat-box");
 var score = [];
 
 initialization();
-
 var INPUTS = ['INPUT', 'TEXTAREA'];
 document.addEventListener('keydown', function (e) {
     // Key Down
@@ -134,7 +133,7 @@ document.addEventListener('keydown', function (e) {
 }, false);
 
 function initialization() {
-    config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Hotkey</div>'+
+    config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Commands</div>'+
                                                         '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
                                                         '<p>AltとShiftの修飾キーが使用可能です。Altを使いたい場合はAを、Shiftを使いたい場合はSをアルファベットの前に付けてください。</p>' +
                                                         '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
@@ -167,6 +166,11 @@ function initialization() {
     cb.innerHTML = "正解(Q)";
     wb.innerHTML = "誤答(W)";
     tb.innerHTML = "スルー(E)";
+
+    if(isProvider) {
+        cb.addEventListener("click", checkThrough, false);
+        tb.addEventListener("click", checkThrough, false);
+    }
     consoleApply.addEventListener("click", function () {
         refreshHotkey();
         if(flavors == null) flavors = [config.querySelector(".name").value, config.querySelector(".flavor").value, document.getElementById("flavor1").value, document.getElementById("flavor2").value];
@@ -180,6 +184,21 @@ function initialization() {
         flavors = null;
     });
 }
+
+// スルーアラート設定
+var alertcount = 0; // 何回目のアラートかをカウント（キャンセル済みかを確認する）
+var throughAlert = false;
+
+function checkThrough(){
+    if(!throughAlert) return;
+    document.querySelector('.dimmable').style.backgroundColor = "white";
+    alertcount++;
+    var al = alertcount;
+    setTimeout(function() {
+        if(alertcount <= al) document.querySelector('.dimmable').style.backgroundColor = "yellow";
+    },15000);
+}
+
 
 function pasteAndSend(){
     var songdata = "No data";
@@ -210,6 +229,10 @@ function chat(comment) {
 }
 
 function refreshHotkey() {
+    // 特殊コマンドによる設定を初期化
+    throughAlert = false;
+
+    // 本チャン処理
     var puretext = new DOMParser().parseFromString(hotkeyBox.value, 'text/html').documentElement.textContent;
 
     var lines = puretext.split('\n').filter(line => line.indexOf(":") != -1);
@@ -228,18 +251,25 @@ function refreshHotkey() {
                 cont = line.slice(i+1);
             }
         }
-
-        if(slicestart == 1){
-            playerHotkeylines.push({
-                key: keyt,
-                content: cont,
-            });
+        if(keyt == ""){
+            // 特殊コマンドの処理
+            if(cont=="alert"){
+               throughAlert = true;
+            }
         }
         else{
-            hotkeylines.push({
-                key: keyt,
-                content: cont,
-            });
+            if(slicestart == 1){
+                playerHotkeylines.push({
+                    key: keyt,
+                    content: cont,
+                });
+            }
+            else{
+                hotkeylines.push({
+                    key: keyt,
+                    content: cont,
+                });
+            }
         }
     });
     exportHotkey();

@@ -4,6 +4,8 @@ NQA2 Automatically Paste Tool
 
 Automatically paste and send the copied song information etc. at the time of questioning in NQA2
 
+--> [Japanese Manual](ManualJP.md)
+
 ## Setup
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
@@ -17,6 +19,9 @@ The title bar color changes to darkblue(player)/sienna(provider) when this scrip
 
 Clicking title(`Nagaya Quiz Arena 2 with NAPT`), You can go back and forth between `player` and `provider`.
 
+You can set original hot keys and use some special setting.
+
+### Key Operation
 All operation is moved from keydown. When you are player, you can only use swap(`[` and `]`).
 
 |Key|Operation|
@@ -32,8 +37,6 @@ All operation is moved from keydown. When you are player, you can only use swap(
 |[|Swap flavor and flavor-sub1|
 |]|Swap flavor and flavor-sub2|
 
-And you can set original hot keys.
-
 ## Operation confirmed environment
 
 * Chrome 
@@ -43,4 +46,4 @@ Firefox is not ready.....
 
 ## LICENSE 
 
-MIT
+[MIT](LICENSE)
