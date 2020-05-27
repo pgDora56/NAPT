@@ -4,7 +4,7 @@ NQA2 Automatically Paste Tool
 
 Automatically paste and send the copied song information etc. at the time of questioning in NQA2
 
---> [Japanese Manual](https://github.com/pgDora56/NAPT/blob/master/ManualJP.md)
+--> [Japanese Manual](https://gist.github.com/pgDora56/73510be80f6a1370fcd353b6f0ca1959)
 
 ## Setup
 
