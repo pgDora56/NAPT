@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.5.0
+// @version      1.5.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -317,10 +317,10 @@ function updateScoreData(){
 
     // Sort(丸数→罰数)
     score.sort(function(a,b){
-        if(a[2] > b[2]) return -1;
-        if(a[2] < b[2]) return 1;
-        if(a[3] < b[3]) return -1;
-        if(a[3] > b[3]) return 1;
+        if(Number(a[2]) > Number(b[2])) return -1;
+        if(Number(a[2]) < Number(b[2])) return 1;
+        if(Number(a[3]) < Number(b[3])) return -1;
+        if(Number(a[3]) > Number(b[3])) return 1;
         return 0;
     });
 
