@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.5.1
+// @version      1.5.2
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -26,7 +26,14 @@ var flavors;
 // Provider setting
 var isProvider = (window.location.href.slice(-8) == "provider" || window.location.href.slice(-9) == "provider?" );
 var displayRank = window.location.href.slice(-1) == "?";
+var easyBoard = window.location.href.slice(-12) == "player?board";
+if(easyBoard) {
+    var boardsub = `<div id="board-window-sub" style="width:75%; margin:0 auto;"> <div class="content"> <div class="ui form"> <div class="field"> <textarea class="board" rows="2" maxlength="20"></textarea> </div> </div> </div> <div class="actions">  <div class="ui positive right submit button" style="width: 100%;" onclick='document.getElementById("board-window").querySelector(".board").value=document.getElementById("board-window-sub").querySelector(".board").value;document.getElementById("board-window").querySelector(".submit.button").click();document.getElementById("board-window-sub").querySelector(".board").value="";'> Submit </div> </div> </div>`
+    document.getElementById("show-board-window").remove();
+    document.getElementById("controlbar").insertAdjacentHTML('beforebegin', boardsub);
+}
 var barcolor = isProvider ? "sienna" : "darkblue";
+
 
 //
 // Element Definition
@@ -147,6 +154,7 @@ function initialization() {
         document.querySelector(".game-view.ui.divided.grid").insertAdjacentHTML('afterbegin', '<div class="two wide column"><div id="rank"></div></div>');
         document.querySelector(".eleven.wide.column").setAttribute("class", "nine wide column");
     }
+
     hotkeyBox = document.getElementById("napt-hotkey");
     importHotkey();
     refreshHotkey();
@@ -227,6 +235,7 @@ function chat(comment) {
     chatbox.value = comment;
     document.querySelector('.ui.blue.icon.submit.button').click();
 }
+
 
 function refreshHotkey() {
     // 特殊コマンドによる設定を初期化
