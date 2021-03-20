@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.5.2
+// @version      1.5.3
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -24,11 +24,12 @@ var flavors;
 
 //
 // Provider setting
-var isProvider = (window.location.href.slice(-8) == "provider" || window.location.href.slice(-9) == "provider?" );
+var isProvider = (window.location.href.slice(-8) == "provider" || window.location.href.slice(-9) == "provider?" || window.location.href.slice(-14) == "provider?board");
 var displayRank = window.location.href.slice(-1) == "?";
-var easyBoard = window.location.href.slice(-12) == "player?board";
-if(easyBoard) {
-    var boardsub = `<div id="board-window-sub" style="width:75%; margin:0 auto;"> <div class="content"> <div class="ui form"> <div class="field"> <textarea class="board" rows="2" maxlength="20"></textarea> </div> </div> </div> <div class="actions">  <div class="ui positive right submit button" style="width: 100%;" onclick='document.getElementById("board-window").querySelector(".board").value=document.getElementById("board-window-sub").querySelector(".board").value;document.getElementById("board-window").querySelector(".submit.button").click();document.getElementById("board-window-sub").querySelector(".board").value="";'> Submit </div> </div> </div>`
+var easyBoard = window.location.href.slice(-6) == "?board";
+if(easyBoard && !isProvider) {
+    var boardsub = `<div id="board-window-sub" style="width:75%; margin:0 auto;"> <div class="content"> <div class="ui form"> <div class="field"> <textarea class="board" rows="2" maxlength="20"></textarea> </div> </div> </div> <div class="actions">  <div id="sub-submit" class="ui positive right submit button" style="width: 100%;"'> Submit </div> </div> </div>`
+    //document.getElementById("board-window").remove();
     document.getElementById("show-board-window").remove();
     document.getElementById("controlbar").insertAdjacentHTML('beforebegin', boardsub);
 }
@@ -42,10 +43,15 @@ var wb = document.getElementById("wrong-button");
 var tb = document.getElementById("through-button")
 var consoleApply = config.querySelector(".ui.positive.right.submit.button");
 var chatbox = document.querySelector(".chat-box");
+var mainboardArea = document.getElementById("board-window");
+var subboardArea = document.getElementById("board-window-sub");
 var score = [];
 
 initialization();
 var INPUTS = ['INPUT', 'TEXTAREA'];
+
+
+
 document.addEventListener('keydown', function (e) {
     // Key Down
     if (INPUTS.indexOf(e.target.tagName) == -1) { // Do not process when input text
@@ -139,6 +145,8 @@ document.addEventListener('keydown', function (e) {
     }
 }, false);
 
+
+
 function initialization() {
     config.querySelector(".ui.form").insertAdjacentHTML('beforeend','<div class="ui dividing header">NAPT\'s Commands</div>'+
                                                         '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
@@ -165,10 +173,18 @@ function initialization() {
     var link = window.location.href;
     if(displayRank) link = link.slice(0,-1);
     if(isProvider){
-        movelink = link.slice(0, -8) + "player";
+        if(easyBoard) {
+            movelink = link.slice(0, -14) + "player?board";
+        } else {
+            movelink = link.slice(0, -8) + "player";
+        }
     }
     else{
-        movelink = link.slice(0, -6) + "provider";
+        if(easyBoard) {
+            movelink = link.slice(0, -12) + "provider?board";
+        } else {
+            movelink = link.slice(0, -6) + "provider";
+        }
     }
     document.querySelector("h1").innerHTML = "<a href='" + movelink + (displayRank ? "?" : "" ) + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
     cb.innerHTML = "正解(Q)";
@@ -191,6 +207,23 @@ function initialization() {
         }
         flavors = null;
     });
+    document.querySelector("#board-window-sub textarea.board").addEventListener("keydown", boardSendFromKey);
+    document.getElementById("sub-submit").addEventListener("click", boardSend, false);
+}
+
+function boardSendFromKey(e){
+    if(event.ctrlKey){
+        if(e.keyCode === 13){
+            boardSend();
+            return false;
+        }
+    };
+}
+
+function boardSend(){
+    mainboardArea.querySelector(".board").value = subboardArea.querySelector(".board").value;
+    mainboardArea.querySelector(".submit.button").click();
+    subboardArea.querySelector(".board").value = "";
 }
 
 // スルーアラート設定
