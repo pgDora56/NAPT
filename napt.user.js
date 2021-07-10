@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.5.5
+// @version      1.6.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
@@ -14,8 +14,8 @@
 var debug_mode = false;
 
 var i, movelink;
-var hotkeyBox = null;
-var hotkeylines = []; var playerHotkeylines = [];
+var hotkeyBox = null; var gamepadKeycheck = null;
+var hotkeylines = []; var playerHotkeylines = []; var gamepadShortcut = {};
 var body = document.querySelector("body");
 const defhotkey = "m:(o・∇・o)\nn:(*>△<)\nk:草";
 var config = document.getElementById("config-window");
@@ -40,7 +40,9 @@ var barcolor = isProvider ? "sienna" : "darkblue";
 // Element Definition
 var cb = document.getElementById("correct-button");
 var wb = document.getElementById("wrong-button");
-var tb = document.getElementById("through-button")
+var tb = document.getElementById("through-button");
+var sb = document.getElementById("slash-button");
+
 var consoleApply = config.querySelector(".ui.positive.right.submit.button");
 var chatbox = document.querySelector(".chat-box");
 var mainboardArea = document.getElementById("board-window");
@@ -81,9 +83,6 @@ document.addEventListener('keydown', function (e) {
             // Push ]
             flavorSwap(2);
         }
-        else if(pressed == "ASc") {
-            eraseChat();
-        }
         else{
             var match = [];
             if(!isProvider) {
@@ -101,12 +100,12 @@ document.addEventListener('keydown', function (e) {
                 else chat(match[0].content);
             }
         }
-//         if(pressed == "z"){
-//             for(i = 0; i < 41700; i++) {
-//                 chat("モチョカワイイネー");
-//             }
-//             chat("(*>△<)");
-//         }
+        //         if(pressed == "z"){
+        //             for(i = 0; i < 41700; i++) {
+        //                 chat("モチョカワイイネー");
+        //             }
+        //             chat("(*>△<)");
+        //         }
 
         if(isProvider){
             if(pressed == "q"){
@@ -138,12 +137,12 @@ document.addEventListener('keydown', function (e) {
                     freezeplus.click();
                 }
             }
-//             else if(pressed == "z") {
-//                 var wroplus = document.querySelector(".player.selected").querySelector(".wrong-plus.ui.icon.red.button");
-//                 for(i = 0; i < 41700; i++) {
-//                     wroplus.click();
-//                 }
-//              }
+            //             else if(pressed == "z") {
+            //                 var wroplus = document.querySelector(".player.selected").querySelector(".wrong-plus.ui.icon.red.button");
+            //                 for(i = 0; i < 41700; i++) {
+            //                     wroplus.click();
+            //                 }
+            //              }
         }
     }
 }, false);
@@ -155,11 +154,11 @@ function initialization() {
                                                         '<p>アルファベットの小文字で指定してください。複数指定した場合は最初に指定されたものが適用されます。</p>'+
                                                         '<p>AltとShiftの修飾キーが使用可能です。Altを使いたい場合はAを、Shiftを使いたい場合はSをアルファベットの前に付けてください。</p>' +
                                                         '<p>q,w,eのキーなど、正誤判定者で使用するHotkeyと同じ文字を指定した場合は両方の挙動がなされますので注意して設定してください。先頭に!をつけるとPlayer時のみに適用されるHotkeyとすることができます。</p>'+
-                                                        '<p>個数に制限はありませんが、多く設定しすぎると送信までの処理時間が長くなる可能性があります。</p>'+
-                                                        '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div>\n');
+                                                        '<p>頭に数字を指定し、後ろ側にslash/correct/wrong/throughをつけるとそれぞれ、早押し/正解判定/誤答判定/スルー、のショートカットになります（`1:slash`と言った具合）。</p>'+
+                                                        '<div class="field"><textarea id="napt-hotkey">' + defhotkey + '</textarea></div><div id="gamepad-check"></div>\n');
 
     config.querySelector(".fields").insertAdjacentHTML('beforeend', '<div class="field"><label>flavor-sub1</label><input type="text" id="flavor1" maxlength="10"></div>'
-                                                      +'<div class="field"><label>flavor-sub2</label><input type="text" id="flavor2" maxlength="10"></div>')
+                                                       +'<div class="field"><label>flavor-sub2</label><input type="text" id="flavor2" maxlength="10"></div>')
     //document.querySelector(".five.wide.column").insertAdjacentHTML('beforeend', '<div id="rank"></div>');
     if(displayRank){
         document.querySelector(".game-view.ui.divided.grid").insertAdjacentHTML('afterbegin', '<div class="two wide column"><div id="rank"></div></div>');
@@ -167,6 +166,7 @@ function initialization() {
     }
 
     hotkeyBox = document.getElementById("napt-hotkey");
+    gamepadKeycheck = document.getElementById("gamepad-check");
     importHotkey();
     refreshHotkey();
 
@@ -189,7 +189,7 @@ function initialization() {
             movelink = link.slice(0, -6) + "provider";
         }
     }
-    document.querySelector("h1").innerHTML = "<a href='" + movelink + (displayRank ? "?" : "" ) + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
+    document.querySelector("h1").innerHTML = "<a id='toplink' href='" + movelink + (displayRank ? "?" : "" ) + "'>" + "Nagaya Quiz Arena 2 with NAPT</a>";
     cb.innerHTML = "正解(Q)";
     wb.innerHTML = "誤答(W)";
     tb.innerHTML = "スルー(E)";
@@ -274,12 +274,6 @@ function chat(comment) {
     document.querySelector('.ui.blue.icon.submit.button').click();
 }
 
-function eraseChat() {
-    for(var i = 0 ; i < 4170; i++){
-        send("");
-    }
-}
-
 
 function refreshHotkey() {
     // 特殊コマンドによる設定を初期化
@@ -307,7 +301,7 @@ function refreshHotkey() {
         if(keyt == ""){
             // 特殊コマンドの処理
             if(cont=="alert"){
-               throughAlert = true;
+                throughAlert = true;
             }
         }
         else{
@@ -318,13 +312,21 @@ function refreshHotkey() {
                 });
             }
             else{
-                hotkeylines.push({
-                    key: keyt,
-                    content: cont,
-                });
+                if (isNaN(keyt)) {
+                    hotkeylines.push({
+                        key: keyt,
+                        content: cont,
+                    });
+                } else {
+                    gamepadShortcut[keyt] = cont;
+                }
             }
         }
     });
+    if (debug_mode){
+        console.log("playerHotkeylines: " + playerHotkeylines);
+        console.log("gamepadShortcut: " + gamepadShortcut);
+    }
     exportHotkey();
 }
 
@@ -381,10 +383,10 @@ function updateScoreData(){
     var rank = 1;
     score[0][0] = 1;
     for(i=1;i<score.length;i++){
-       if(score[i-1][2] != score[i][2] || score[i-1][3] != score[i][3]){
-           rank = i + 1;
-       }
-       score[i][0] = rank;
+        if(score[i-1][2] != score[i][2] || score[i-1][3] != score[i][3]){
+            rank = i + 1;
+        }
+        score[i][0] = rank;
     }
 
     // HTML生成
@@ -407,4 +409,129 @@ function importHotkey() {
 
 function exportHotkey() {
     window.localStorage.setItem("hotkey", hotkeyBox.value);
+}
+
+///
+/// Gamepad settings =====================================================
+///
+
+var haveEvents = 'ongamepadconnected' in window;
+var controllers = {};
+var buttonStatus = {};
+
+function connecthandler(e) {
+    addgamepad(e.gamepad);
+}
+
+function addgamepad(gamepad) {
+    controllers[gamepad.index] = gamepad;
+    var status = [];
+
+    for (var i = 0; i < gamepad.buttons.length; i++) {
+        var val = gamepad.buttons[i];
+        var pressed = val == 1.0;
+        if (typeof(val) == "object") {
+            pressed = val.pressed;
+            val = val.value;
+        }
+        status.push(pressed);
+    }
+    buttonStatus[gamepad.index] = status;
+
+    document.getElementById("toplink").innerHTML = "Nagaya Quiz Arena 2 with NAPT(GP:Active)";
+
+    requestAnimationFrame(updateStatus);
+}
+
+function disconnecthandler(e) {
+    removegamepad(e.gamepad);
+}
+
+function removegamepad(gamepad) {
+    var d = document.getElementById("controller" + gamepad.index);
+    delete buttonStatus[gamepad.index];
+    delete controllers[gamepad.index];
+    console.log(controllers);
+    if(Object.keys(controllers).length == 0) {
+        document.getElementById("toplink").innerHTML = "Nagaya Quiz Arena 2 with NAPT";
+    }
+}
+
+function updateStatus() {
+    if (!haveEvents) {
+        scangamepads();
+    }
+
+    var i = 0;
+    var j;
+
+    for (j in controllers) {
+        var controller = controllers[j];
+        var pushed = "";
+        var changed = false;
+        for (i = 0; i < controller.buttons.length; i++) {
+            var val = controller.buttons[i];
+            var pressed = val == 1.0;
+            if (typeof(val) == "object") {
+                pressed = val.pressed;
+                val = val.value;
+            }
+
+            if ((pressed || buttonStatus[controller.index][i]) && !(pressed && buttonStatus[controller.index][i])) {
+                if(pressed){
+                    if(debug_mode) console.log("Button" + i + " is pushed");
+                    if(gamepadShortcut[i]){
+                        // Keyが存在
+                        var sc = gamepadShortcut[i];
+                        if(sc == "slash") {
+                            sb.dispatchEvent(new Event("mousedown"));
+                        } else if (sc == "correct") {
+                            cb.click();
+                        } else if (sc == "wrong") {
+                            wb.click();
+                        } else if (sc == "through") {
+                            tb.click();
+                        }
+                    }
+                } else {
+                    if(debug_mode) console.log("Button" + i + " is released");
+                }
+                buttonStatus[controller.index][i] = pressed;
+                changed = true;
+            }
+
+            if(pressed) {
+                pushed += " Button" + i;
+            }
+        }
+        if (changed) {
+            if (pushed == ""){
+                gamepadKeycheck.innerHTML = "No button pushed";
+            } else {
+                gamepadKeycheck.innerHTML = "Push: " + pushed;
+            }
+        }
+    }
+
+    requestAnimationFrame(updateStatus);
+}
+
+function scangamepads() {
+    var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+    for (var i = 0; i < gamepads.length; i++) {
+        if (gamepads[i]) {
+            if (gamepads[i].index in controllers) {
+                controllers[gamepads[i].index] = gamepads[i];
+            } else {
+                addgamepad(gamepads[i]);
+            }
+        }
+    }
+}
+
+window.addEventListener("gamepadconnected", connecthandler);
+window.addEventListener("gamepaddisconnected", disconnecthandler);
+
+if (!haveEvents) {
+    setInterval(scangamepads, 500);
 }
