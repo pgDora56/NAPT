@@ -1,12 +1,13 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.6.0
+// @version      1.6.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://powami.herokuapp.com/nqa2/*
 // @license		 MIT License
-// @grant        GM_setValue, GM_getValue
+// @grant GM_setValue
+// @grant GM_getValue
 // @supportURL	https://github.com/pgDora56/NAPT/issues
 // @updateURL	https://raw.githubusercontent.com/pgDora56/NAPT/master/napt.user.js
 // ==/UserScript==
