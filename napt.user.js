@@ -4,7 +4,7 @@
 // @version      1.6.1
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
-// @match    https://powami.herokuapp.com/nqa2/*
+// @match    https://penpenpng.com/nqa2/*
 // @license		 MIT License
 // @grant GM_setValue
 // @grant GM_getValue
