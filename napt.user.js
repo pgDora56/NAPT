@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.6.2
+// @version      1.7.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://penpenpng.com/nqa2/*
@@ -51,6 +51,8 @@ var subboardArea = document.getElementById("board-window-sub");
 var score = [];
 
 initialization();
+window.addEventListener("load", onloadInitialization);
+
 var INPUTS = ['INPUT', 'TEXTAREA'];
 
 
@@ -144,6 +146,17 @@ document.addEventListener('keydown', function (e) {
             //                     wroplus.click();
             //                 }
             //              }
+        } else { // player
+            if(keycode == 13 && sb.textContent == "Standby") { // Push enter
+                setTimeout(function() {
+                    if (debug_mode) {
+                        console.log("slash-button's class:", sb.className, sb.className == "ui orange big button");
+                    }
+                    if(sb.className == "ui orange big button") { // focusがあることを確認する
+                        sb.dispatchEvent(new Event('mousedown'));
+                    }
+                }, 100);
+            }
         }
     }
 }, false);
@@ -215,6 +228,20 @@ function initialization() {
         document.querySelector("#board-window-sub textarea.board").addEventListener("keydown", boardSendFromKey);
         document.getElementById("sub-submit").addEventListener("click", boardSend, false);
     }
+}
+
+
+function onloadInitialization() {
+     // Standbyをわかりやすくする
+    let css = `
+#controlbar #slash-button.focus {
+  background: darkgreen;
+  box-shadow: none;
+  animation: none;
+}`;
+    let style = document.createElement('style');
+    style.innerHTML = css;
+    document.head.append(style);
 }
 
 function boardSendFromKey(e){
