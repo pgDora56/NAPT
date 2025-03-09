@@ -1,7 +1,7 @@
 /// ==UserScript==
 // @name         NAPT - NQA2 AutoPaste & Send Tool
 // @namespace    https://github.com/pgDora56
-// @version      1.7.0
+// @version      1.8.0
 // @description  Auto paste for NQA2's chat-area & send, and more
 // @author   Dora F.
 // @match    https://penpenpng.com/nqa2/*
@@ -161,6 +161,43 @@ document.addEventListener('keydown', function (e) {
     }
 }, false);
 
+var storedScore = [];
+
+function scoreSave() {
+    let pl = document.getElementById("players").querySelectorAll(".player");
+
+    storedScore = [];
+
+    pl.forEach((p) => {
+        storedScore.push([p.getAttribute("id"), Number(p.querySelectorAll(".correct")[1].querySelector(".score-value").innerHTML), Number(p.querySelector(".wrong").querySelector(".score-value").innerHTML)]);
+    });
+
+    alert("スコアをセーブしました！");
+}
+
+function scoreRestore() {
+    let result = confirm ('スコアをリストアしていいですか？');
+    if (!result) {
+        return;
+    }
+    storedScore.forEach((score) => {
+        let pl = document.getElementById(score[0]);
+        if(pl != undefined) {
+            for(let i = 0; i < score[1]; i++) {
+                if(Number(pl.querySelectorAll(".correct")[1].querySelector(".score-value").innerHTML) >= score[1]) {
+                    break;
+                }
+                pl.querySelector(".correct-plus").click();
+            }
+            for(let j = 0; j < score[2]; j++) {
+                if(Number(pl.querySelector(".wrong").querySelector(".score-value").innerHTML) >= score[2]) {
+                    break;
+                }
+                pl.querySelector(".wrong-plus").click();
+            }
+        }
+    });
+}
 
 
 function initialization() {
@@ -178,6 +215,7 @@ function initialization() {
         document.querySelector(".game-view.ui.divided.grid").insertAdjacentHTML('afterbegin', '<div class="two wide column"><div id="rank"></div></div>');
         document.querySelector(".eleven.wide.column").setAttribute("class", "nine wide column");
     }
+
 
     hotkeyBox = document.getElementById("napt-hotkey");
     gamepadKeycheck = document.getElementById("gamepad-check");
@@ -211,6 +249,14 @@ function initialization() {
     if(isProvider) {
         cb.addEventListener("click", checkThrough, false);
         tb.addEventListener("click", checkThrough, false);
+
+        document.querySelector(".page-header").insertAdjacentHTML(
+            "beforeend",
+            '<div class="ui icon" data-tooltip="ScoreSave" data-position="bottom right"><i id="score-save" class="big icon download"></i></div><div class="ui icon" data-tooltip="ScoreRestore" data-position="bottom right"><i id="score-restore" class="big icon upload"></i></div>'
+        );
+
+        document.getElementById("score-save").addEventListener('click', scoreSave);
+        document.getElementById("score-restore").addEventListener('click', scoreRestore);
     }
     consoleApply.addEventListener("click", function () {
         refreshHotkey();
