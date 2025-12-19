@@ -8,6 +8,17 @@ Automatically paste and send the copied song information etc. at the time of que
 
 ## Setup
 
+### Method 1: Chrome Extension (Recommended)
+
+1. Download or clone this repository
+2. Open Chrome and navigate to `chrome://extensions/`
+3. Enable "Developer mode" in the top right corner
+4. Click "Load unpacked"
+5. Select the folder containing `manifest.json` and `content_script.js`
+6. The extension is now installed and will automatically run on NQA2 pages
+
+### Method 2: Tampermonkey UserScript
+
 1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
 2. Click [napt.user.js](https://github.com/pgDora56/NAPT/raw/master/napt.user.js)
 

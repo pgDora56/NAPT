@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "NAPT - NQA2 AutoPaste & Send Tool",
+  "version": "1.8.0",
+  "description": "Auto paste for NQA2's chat-area & send, and more",
+  "author": "Dora F.",
+  "permissions": [
+    "storage",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "https://penpenpng.com/nqa2/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://penpenpng.com/nqa2/*"],
+      "js": ["content_script.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
+
